@@ -1,0 +1,42 @@
+local playerData = {}
+
+function setupPlayer(player)
+local leaderstats = Instance.new("Folder")
+leaderstats.Name = "leaderstats"
+
+local coins = Instance.new("IntValue")
+coins.Name = "Coins"
+coins.Value = 0
+coins.Parent = leaderstats
+
+local rebirths = Instance.new("IntValue")
+rebirths.Name = "Rebirths"
+rebirths.Value = 0
+rebirths.Parent = leaderstats
+
+leaderstats.Parent = player
+playerData[player] = {Coins = coins, Rebirths = rebirths}
+end
+
+game.Players.PlayerAdded:Connect(function(player)
+setupPlayer(player)
+end)
+
+game.Players.PlayerRemoving:Connect(function(player)
+playerData[player] = nil
+end)
+
+while true do
+wait(1) -- wait for 1 second
+for player, data in pairs(playerData) do
+    if data.Rebirths.Value == 0 then
+        data.Coins.Value = data.Coins.Value + 1
+    else
+        data.Coins.Value = data.Coins.Value + data.Rebirths.Value * 1.5
+    end
+
+    local requiredCoins = 10 * math.pow(1.5, data.Rebirths.Value)
+    if data.Coins.Value >= requiredCoins then
+        data.Rebirths.Value = data.Rebirths.Value + 1
+        data.Coins.Value = 0
+    end
