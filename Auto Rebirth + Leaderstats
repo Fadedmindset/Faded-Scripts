@@ -40,3 +40,30 @@ for player, data in pairs(playerData) do
         data.Rebirths.Value = data.Rebirths.Value + 1
         data.Coins.Value = 0
     end
+
+--Auto Rebirth--
+
+game.Players.PlayerAdded:Connect(function(player)
+player.ChildAdded:Connect(function(child)
+    if child:IsA("PlayerGui") then
+        local leaderstats = player:WaitForChild("leaderstats")
+        local coins = leaderstats:WaitForChild("Coins")
+        local rebirths = leaderstats:WaitForChild("Rebirths")
+
+        local coinMultiplier = 1
+        local coinRequirementMultiplier = 1.5
+        local baseCoinRequirement = 10
+
+        while true do
+            wait(1) -- wait for 1 second
+
+            -- Only trigger auto-rebirth when the player has at least 1000 coins
+            if coins.Value >= baseCoinRequirement then
+                -- Calculate the next rebirth requirements and update the rebirths value
+                local nextRebirthRequirement = math.ceil(baseCoinRequirement * coinRequirementMultiplier ^ rebirths.Value)
+                coins.Value = coins.Value * coinMultiplier
+                rebirths.Value = rebirths.Value + 1
+
+                -- Update the base coin requirement for the next rebirth
+                baseCoinRequirement = nextRebirthRequirement
+            end
